@@ -1,7 +1,7 @@
 const cc = require('currency-codes');
 const NodeCache = require( 'node-cache' );
 const axios = require('axios').default;
-const Currency = require('./models/Currency');
+const Currency = require('../Classes/Currency');
 const myCache = new NodeCache( { stdTTL: 100, checkperiod: 120 } );
 
 let getApi = async function getCurrency() {
@@ -14,25 +14,26 @@ let getApi = async function getCurrency() {
     console.log('cache not found');
 
     try{
-        let response = await axios.get('https://bank.gov.ua/NBUStatService/v1/statdirectory/exchangenew?json');
+        let response = await axios.get('https://api.monobank.ua/bank/currency');
         data = response.data;
     }
     catch(e){
          console.log(e);
     
-    }
-
+    };
 
     let currencies = [];
     data.forEach(element => {
-        elem = cc.number((element.r030 + '').padStart(3, '0'));
+        elem = cc.number((element.currencyCodeA+'').padStart(3, '0'));
         let rate;
-        if (elem) {
-            if (element.rate) {
-                rate = element.rate;
+        if (elem){
+            if (element.rateBuy){
+                rate = element.rateBuy;
             }
-
-            const c = new Currency(element.r030, elem.code, rate);
+            else{
+                rate = element.rateCross;
+            }
+            const c = new Currency(element.currencyCodeA, elem.code, rate);
             currencies.push(c);
         }
     });
