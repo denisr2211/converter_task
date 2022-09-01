@@ -1,26 +1,26 @@
 const cc = require('currency-codes');
-const NodeCache = require( 'node-cache' );
+const NodeCache = require('node-cache');
 const axios = require('axios').default;
 const Currency = require('../Classes/Currency');
-const myCache = new NodeCache( { stdTTL: 100, checkperiod: 120 } );
+const myCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 
 let getApi = async function getCurrency() {
     let value = myCache.get('values');
     if (value) {
         console.log('cache found');
         return value;
-    }
+    };
     let data;
     console.log('cache not found');
 
-    try{
+    try {
         let response = await axios.get('https://bank.gov.ua/NBUStatService/v1/statdirectory/exchangenew?json');
         data = response.data;
     }
-    catch(e){
-         console.log(e);
-    
-    }
+    catch (e) {
+        console.log(e);
+
+    };
 
     let currencies = [];
     data.forEach(element => {
@@ -29,7 +29,7 @@ let getApi = async function getCurrency() {
         if (elem) {
             if (element.rate) {
                 rate = element.rate;
-            }
+            };
 
             const c = new Currency(element.r030, elem.code, rate);
             currencies.push(c);

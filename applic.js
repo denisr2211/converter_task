@@ -14,22 +14,20 @@ exApp.post('/convert', parser.json(), async (req, res) => {
         return req.sendStatus(400);
     }
     else {
-        try{
+        try {
             result = await getSumm(req.body.convert.amount, req.body.convert.type, req.body.to.type, req.body.withBank);
             res.send(result.getResult());
         }
-        catch(e){
-            if (e instanceof UndefinedCurrency){
-                res.status(321).send({currency_error:e.message, cur_type:e.originalCurrency});
+        catch (e) {
+            if (e instanceof UndefinedCurrency) {
+                res.status(321).send({ currency_error: e.message, cur_type: e.originalCurrency });
             }
-            else{
-                res.status(500).send({common_error:e.message});
-            }
-            
-        }
-    };   
+            else {
+                res.status(500).send({ common_error: e.message });
+            };
+        };
+    };
 });
-
 
 exApp.listen(port, () => {
     console.log(`App listening on port ${port}...`)

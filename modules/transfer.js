@@ -6,7 +6,6 @@ const apiNbu = require('./models/API/api_nbu');
 const UndefinedCurrency = require('./models/Classes/Error');
 
 
-
 function getSummResult(data, amount, clientCurCodeFrom, clientCurCodeTo, source) {
     
     const currencyFrom = cc.code(clientCurCodeFrom);
@@ -14,11 +13,11 @@ function getSummResult(data, amount, clientCurCodeFrom, clientCurCodeTo, source)
 
     if (currencyTo == undefined){
         throw new UndefinedCurrency('Currency not found', clientCurCodeTo);
-    }
+    };
     
     if (currencyFrom == undefined){
         throw new UndefinedCurrency('Currency not found', clientCurCodeFrom);
-    }
+    };
     
     const foundCurrencyFrom = data.find((cur) => {
         return cur.getCode().toString() === currencyFrom.number;
@@ -30,26 +29,24 @@ function getSummResult(data, amount, clientCurCodeFrom, clientCurCodeTo, source)
 
     let summ = (amount * foundCurrencyFrom.getRate() / foundCurrencyTo.getRate()).toFixed(2);
     return new Result(summ, foundCurrencyTo.getLetterCode(), source);
-}
+};
 
 
 module.exports = async function (amount, clientCurCodeFrom, clientCurCodeTo, source) {
 
     if (source !== 'mono' && source !== 'nbu') { 
         throw new Error ('Invalid sourse');
-    }
+    };
 
     let data;
 
     if (source === 'mono' ) {
         data = await apiMono();
     }
-
     else if (source === 'nbu') {
         data = await apiNbu();
-    }
+    };
 
     return getSummResult(data, amount, clientCurCodeFrom, clientCurCodeTo, source);
-
 
 };
